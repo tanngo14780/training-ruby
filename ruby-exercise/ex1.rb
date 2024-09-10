@@ -1,5 +1,3 @@
-# Nhập vào một mảng gồm n số từ bàn phím (quá trình nhập
-# sẽ dừng khi người sử dụng nhập vào giá trị là chữ) sau đó
 array = []
 puts  "Input"
 
@@ -19,25 +17,23 @@ end
 puts "Array [#{array.join(",")}]"
 
 # - hiển thị giá trị nhỏ nhất của mảng ra màn hình.
-min = array[0]
 puts "Min = #{array.min}"
 
 # - tính giá trị trung bình của mảng
-sum = 0
-array.length.times do |i|
-  sum = sum + array[i]
-end
-puts "Avg = #{sum/array.length}" 
+sum = array.sum
+puts "Avg = #{sum / array.length}"
 
-# - tính tổng của mảng. dùng inject
+# - tính tổng của mảng sử dụng inject thay vì sum
 sum2 = array.inject{|sum, sub| sum+sub}
 puts "Total = #{sum2}"
+
+no_value_message = "Value > 10 does not exist"
 
 # - tìm các phần tử có giá trị > 10
 array2 = array.select { |num| num > 10 }
 
 if array2.empty?
-  puts "Value >10 does not exist"
+  puts no_value_message
 else 
   puts "Value >10 in array: [#{array2.join(",")}]"
 end
@@ -48,6 +44,6 @@ first_value = array.find { |num| num > 10 }
 if first_value
   puts "First value > 10 is #{first_value}"
 else
-  puts "Value > 10 does not exist"
+  puts no_value_message
 end
 
