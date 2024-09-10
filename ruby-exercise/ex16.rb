@@ -1,94 +1,127 @@
-# "Viết chương trình quản lý nhân viên như sau:
-# Đây là 1 công ty về công nghệ thông tin.
-# Trong 1 công ty, Mỗi nhân viên sẽ có tên và mã nhân viên và bộ phận làm việc của nhân viên
-# Công ty sẽ có các bộ phận như: dev, qa, BO, infra
+class SalaryCalculator
+  LUONG_CO_BAN = 3000
+  HE_SO_LUONG_OT = 1.5
+  def initialize
+    @time = 0
+    @time_ot = 0
+  end
 
-# Do tính chất công việc ở mỗi bộ phận khác nhau, nên sẽ có cách tính lương riêng:
-# + Dev: Lương cơ bản * số giờ  và được hỗ trợ thêm 15% lương
-# + Tester: Lương cơ bản * số giờ  và được hỗ trợ thêm 10% lương
-# + Các nhân viên khác: Lương cơ bản * số giờ 
-# * giả sử lương cơ bản ở đây là 3000
+  def set_time(time, time_ot)
+    @time = time
+    @time_ot = time_ot
+  end
 
-# Ngoài ra, chỉ có nhân viên thuộc bộ phận QA và Dev mới được phép request OT
-# Công thức tính request OT là: Số giờ OT * 150% của lương cơ bản
+  def calculate
+    raise NotImplementedError, "Các class con chưa thực hiện tính toán"
+  end
+end
 
-# Bạn hãy đề xuất thiết kế các lớp đối tượng cần thiết để quản lý danh sách các nhân viên của công ty và hỗ trợ tính lương cho nhân viên theo tiêu chí đặt ra như trên.
-# Hãy viết chương trình thực hiện các yêu cầu sau:
+class DevSalary < SalaryCalculator
+  HE_SO_LUONG  = 1.15
+  def calculate
+    luong_ot = @time_ot * LUONG_CO_BAN *  HE_SO_LUONG_OT
+    (LUONG_CO_BAN * @time * HE_SO_LUONG ) + luong_ot
+  end
+end
 
+class QASalary < SalaryCalculator
+  HE_SO_LUONG  = 1.1
+  def calculate
+    luong_ot = @time_ot * luong_co_ban *  HE_SO_LUONG_OT
+    (LUONG_CO_BAN * @time * HE_SO_LUONG ) + luong_ot
+  end
+end
+
+class DefaultSalary < SalaryCalculator
+  def calculate
+    LUONG_CO_BAN * @time
+  end
+end
 
 class Employee
-  attr_accessor :ten, :manv, :bophan, :luong, :time_ot, :time
-  def initialize(ten, manv, bophan, ot, time)
+  attr_accessor :name, :manv, :bophan, :luong, :time, :time_ot
+
+  def initialize(ten, manv, bophan)
     @ten = ten
-    @manv =manv
+    @manv = manv
     @bophan = bophan
-    @time_ot = ot
+    @time = 0
+    @time_ot = 0
+    @salary_calculator = create_salary_calculator
+  end
+
+  def work_hours(time, time_ot = 0)
     @time = time
+    @time_ot = time_ot
+    calculate_salary
   end
 
   def salary
+    @luong
+  end
+
+  private
+
+  def calculate_salary
+    @luong = @salary_calculator.calculate
+  end
+
+  def create_salary_calculator
     case @bophan
     when "Dev"
-      luong_ot = @time_ot * 3000 * 1.5 
-      @luong = (3000 * @time * 1.15) + luong_ot 
+      DevSalary.new(@time, @time_ot)
     when "QA"
-      luong_ot = @time_ot * 3000 * 1.5 
-      @luong = (3000 * @time * 1.1) + luong_ot 
+      QASalaryr.new(@time, @time_ot)
     else
-      @luong = 3000 * @time
+      DefaultSalary.new(@time, @time_ot)
     end
   end
-
 end
 
 
-# 1. Khởi tạo danh sách nhân viên (lưu trữ trong một mảng duy nhất).
-emp_list =[]
+# Khi khởi tạo danh sách nhân viên
+employee_list = []
 puts "Có bao nhiêu nhân viên: "
-n = gets.chomp.to_i
-n.times do 
+num_employees = gets.chomp.to_i
+num_employees.times do
   puts "Nhập tên nhân viên: "
   name = gets.chomp.to_s
   puts "Nhập mã nhân viên: "
-  manv = gets.chomp.to_s
+  employee_id = gets.chomp.to_s
   puts "Nhập bộ phận: "
-  bophan = gets.chomp.to_s
+  department = gets.chomp.to_s
   puts "Nhập thời gian làm việc(h): "
-  time = gets.chomp.to_f
-  if bophan == "Dev" || bophan == "QA"
+  work_hours = gets.chomp.to_f
+  if department == "Dev" || department == "QA"
     puts "Nhập thời gian OT(h) "
-    ot_time = gets.chomp.to_f
+    overtime_hours = gets.chomp.to_f
   else
-    ot_time = 0
+    overtime_hours = 0
   end
-  emp = Employee.new(name, manv, bophan, ot_time, time)
-  emp.salary
-  emp_list << emp
+  employee = Employee.new(name, employee_id, department)
+  employee.work_hours(work_hours, overtime_hours)
+  employee_list << employee
 end
 
-# 2. Hiển thị toàn bộ thông tin nhân viên
-emp_list.each do |emp|
-  puts "Tên: #{emp.ten}, Mã: #{emp.manv}, Bộ phận: #{emp.bophan}, Lương: #{emp.luong}, Thời gian OT: #{emp.time_ot}, Thời gian làm việc: #{emp.time}"
+# Hiển thị toàn bộ thông tin nhân viên
+employee_list.each do |employee|
+  puts "Tên: #{employee.ten}, Mã: #{employee.manv}, Bộ phận: #{employee.bophan}, Lương: #{employee.luong}, Thời gian OT: #{employee.time_ot}, Thời gian làm việc: #{employee.time}"
 end
-# 3. Lấy ra mã nhân viên có số lương > 5000
-emp_list.each do |emp|
-  if emp.luong > 5000
-    puts "Mã: #{emp.manv}, Lương: #{emp.luong}"
+
+# Lấy ra mã nhân viên có số lương > 5000
+CHECK_POINT = 5000
+employee_list.each do |employee|
+  if employee.luong > CHECK_POINT
+    puts "Mã: #{employee.manv}, Lương: #{employee.luong}"
   end
 end
-# 4. Thêm mới 1 nhân viên vào danh sách nhân viên hiện có"
-def add_employee(emp_list)
-  puts "Nhập tên nhân viên: "
-  name = gets.chomp.to_s
-  puts "Nhập mã nhân viên: "
-  manv = gets.chomp.to_s
-  puts "Nhập bộ phận: "
-  bophan = gets.chomp.to_s
-  time = 0
-  ot_time = 0
 
-  emp = Employee.new(name, manv, bophan, ot_time, time)
-  emp_list << emp
+# Thêm mới 1 nhân viên vào danh sách nhân viên hiện có
+def add_employee(employee_list, new_employee)
+  employee_list.clone << new_employee
 end
 
-add_employee(emp_list)
+# Thêm mới nhân viên
+new_employee = Employee.new(name, employee_id, department)
+new_employee.work_hours(work_hours, overtime_hours)
+employee_list = add_employee(employee_list, new_employee)

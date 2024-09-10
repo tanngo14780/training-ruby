@@ -25,7 +25,3 @@ array.map! do |i|
   luy_thua.call(i)  
 end
 puts array.inspect
-# VD:
-# [1, 2, 3, 4, 5] => output: [1, 4, 9, 16, 25]
-# [2, 3, 3, 6, 7] => output: [4, 9, 9, 6, 7]
-# "

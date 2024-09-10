@@ -19,16 +19,8 @@ end
 puts "Array [#{array.join(",")}]"
 
 # - hiển thị giá trị nhỏ nhất của mảng ra màn hình.
-
-# puts "Min = "+ array.min
 min = array[0]
-loop = array.length-1
-loop.times do |i|
-  if min >= array[i+1]
-    min = array[i+1]
-  end
-end
-puts "Min = #{min}"
+puts "Min = #{array.min}"
 
 # - tính giá trị trung bình của mảng
 sum = 0
@@ -42,28 +34,20 @@ sum2 = array.inject{|sum, sub| sum+sub}
 puts "Total = #{sum2}"
 
 # - tìm các phần tử có giá trị > 10
-array2 =[]
-array.length.times do |i|
-  if array[i] > 10 
-    array2 << array[i]
-  end
-end
-if array2.length == 0 
-  puts "Value >10 does not exist1 "
+array2 = array.select { |num| num > 10 }
+
+if array2.empty?
+  puts "Value >10 does not exist"
 else 
-  puts "Value >10 in array : [#{array2.join(",")}]"
+  puts "Value >10 in array: [#{array2.join(",")}]"
 end
 
 # - tìm phần tử đầu tiên có giá trị > 10
-first_value=nil
-array.length.times do |i|
-  if array[i] > 10
-    puts "First value > 10 is #{array[i]}"
-    first_value=true
-    break
-  end
-end
-if first_value == nil
-  puts "Value >10 does not exist2 "
+first_value = array.find { |num| num > 10 }
+
+if first_value
+  puts "First value > 10 is #{first_value}"
+else
+  puts "Value > 10 does not exist"
 end
 

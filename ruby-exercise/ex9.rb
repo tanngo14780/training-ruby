@@ -1,24 +1,20 @@
-# "Xây dựng module Price có method min_ticket_need_sell trả về số lượng vé cần bán cho mỗi chuyến bay là 100. 
-# (OUTPUT: ""You need         sell at least 100 ticket to fly"")
 module Price 
   def min_ticket_need_sell
     puts "You need sell least 100 ticket to fly"
   end
 end
 
-# Xây dựng class Plane thỏa mãn những điều kiện sau:
-# - Có instance method là flight_attendant in ra số lượng tiếp viên hàng không trên máy bay (số lượng tiếp viên hàng không  là tham số truyền vào) của mỗi chiếc máy bay
-# (OUTPUT: ""In flight have xxx attendant"" - với xxx là tham số truyền vào
-# - Có class method là max_fly_speed in ra tốc độ bay tối đa của tất cả các máy bay
-# (OUTPUT: ""913 km/h"")
 class Plane
+  MAX_FLY_SPEED = "913 km/h"
+
   def flight_attendant(x)
     puts "In flight have #{x} attendant"
   end
+
   def self.max_fly_speed
-    puts "913km/h"
+    puts MAX_FLY_SPEED
   end
-  # - Thừa kế module Price
+
   include Price
 end
 
